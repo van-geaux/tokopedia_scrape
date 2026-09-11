@@ -141,6 +141,8 @@ class AdaptiveTransport:
                     self.activate_proxy(config)
                 elif exc.code not in {408, 425, 500, 502} or attempt == max_attempts:
                     raise
+                if attempt == max_attempts:
+                    raise
             except (URLError, TimeoutError, OSError):
                 if attempt == max_attempts:
                     raise
