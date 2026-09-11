@@ -8,7 +8,9 @@ import re
 import sys
 import time
 from pathlib import Path
-from urllib.request import Request, urlopen
+from urllib.request import Request
+
+from proxy_config import build_http_opener
 
 # Customize these variables, or override them with command-line arguments.
 INPUT_JSON = Path('products.json')
@@ -21,7 +23,7 @@ def fetch(url: str, timeout: int = 60) -> str:
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131 Safari/537.36',
         'Accept-Language': 'id-ID,id;q=0.9,en;q=0.8',
     })
-    with urlopen(request, timeout=timeout) as response:
+    with build_http_opener().open(request, timeout=timeout) as response:
         return response.read().decode('utf-8', 'replace')
 
 

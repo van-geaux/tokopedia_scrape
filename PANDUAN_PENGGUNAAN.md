@@ -183,6 +183,34 @@ Contoh struktur:
 }
 ```
 
+## Konfigurasi Proxy Opsional
+
+Kedua scraper mendukung proxy HTTP/HTTPS dengan autentikasi. Koneksi langsung digunakan secara default.
+
+Salin template konfigurasi:
+
+```bash
+cp .env.example .env
+```
+
+Kemudian isi `.env`:
+
+```dotenv
+PROXY_SCHEME=http
+PROXY_HOST=proxy.example.com
+PROXY_PORT=8080
+PROXY_USERNAME=username_proxy
+PROXY_PASSWORD=password_proxy
+```
+
+Alternatifnya, gunakan satu URL lengkap:
+
+```dotenv
+PROXY_URL=http://username_proxy:password_proxy@proxy.example.com:8080
+```
+
+`PROXY_URL` diprioritaskan jika diisi. File `.env` sudah dikecualikan oleh `.gitignore` dan tidak boleh dibagikan.
+
 ## Alur Penggunaan Lengkap
 
 ```bash

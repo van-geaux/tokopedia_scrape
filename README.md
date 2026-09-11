@@ -135,6 +135,43 @@ DELAY = 0.5
 }
 ```
 
+## Konfigurasi Proxy Opsional
+
+Kedua scraper mendukung proxy HTTP/HTTPS dengan autentikasi. Koneksi langsung tetap digunakan jika proxy tidak dikonfigurasi.
+
+Buat file `.env` dari template:
+
+```bash
+cp .env.example .env
+```
+
+Isi `.env`:
+
+```dotenv
+PROXY_SCHEME=http
+PROXY_HOST=proxy.example.com
+PROXY_PORT=8080
+PROXY_USERNAME=username_proxy
+PROXY_PASSWORD=password_proxy
+```
+
+Alternatifnya, gunakan URL proxy lengkap:
+
+```dotenv
+PROXY_URL=http://username_proxy:password_proxy@proxy.example.com:8080
+```
+
+`PROXY_URL` memiliki prioritas jika diisi. File `.env` tidak boleh dipush karena sudah dikecualikan oleh `.gitignore`.
+
+Setelah `.env` dibuat, jalankan scraper seperti biasa:
+
+```bash
+python3 tokopedia_store_scraper.py --pages 2 --output products.json
+python3 tokopedia_product_details.py --input products.json --output product-details.json
+```
+
+Jika proxy tidak digunakan, biarkan semua variabel proxy kosong atau hapus file `.env`.
+
 ## File yang Tidak Dipush
 
 File hasil scraping dan cache lokal dikecualikan melalui `.gitignore`, termasuk:
