@@ -183,6 +183,12 @@ Contoh struktur:
 }
 ```
 
+## Retry Otomatis
+
+Request yang gagal karena gangguan jaringan atau status HTTP sementara akan dicoba ulang otomatis. Jeda menggunakan pola eksponensial dengan maksimum 30 detik per jeda: 2, 4, 8, 16, lalu 30 detik.
+
+Setiap URL memiliki maksimal 6 percobaan. HTTP 404 dan error permanen lainnya tidak dicoba ulang. Scraper detail akan melanjutkan ke produk berikutnya jika semua percobaan suatu URL gagal.
+
 ## Konfigurasi Proxy Opsional
 
 Kedua scraper mendukung proxy HTTP/HTTPS dengan autentikasi. Koneksi langsung digunakan secara default.

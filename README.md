@@ -135,6 +135,16 @@ DELAY = 0.5
 }
 ```
 
+## Retry Otomatis
+
+Request yang gagal karena gangguan jaringan atau status HTTP sementara akan dicoba ulang otomatis. Pola jedanya eksponensial dan maksimum 30 detik untuk setiap jeda:
+
+```text
+2 detik, 4 detik, 8 detik, 16 detik, 30 detik
+```
+
+Setiap URL memiliki maksimal 6 percobaan. Status permanen seperti HTTP 404 tidak dicoba ulang. Pada scraper detail, jika semua percobaan gagal, URL dicatat sebagai kegagalan dan proses tetap melanjutkan produk berikutnya.
+
 ## Konfigurasi Proxy Opsional
 
 Kedua scraper mendukung proxy HTTP/HTTPS dengan autentikasi. Koneksi langsung tetap digunakan jika proxy tidak dikonfigurasi.
