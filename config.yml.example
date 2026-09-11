@@ -1,0 +1,20 @@
+# Salin file ini menjadi config.yml.
+# Semua nilai di sini bukan rahasia.
+
+proxy:
+  enabled: false
+  scheme: http
+  host: proxy.example.com
+  port: 8080
+  cooldown_seconds: 1800
+  # 403 bersifat opsional, aktifkan hanya jika memang diperlukan.
+  trigger_statuses: [429, 503, 504]
+
+retry:
+  max_attempts: 6
+  initial_delay_seconds: 2
+  max_delay_seconds: 30
+
+request:
+  timeout_seconds: 60
+  delay_between_requests_seconds: 0.5

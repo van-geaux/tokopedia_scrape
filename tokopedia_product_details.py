@@ -10,15 +10,17 @@ import time
 from pathlib import Path
 from urllib.request import Request
 
-from proxy_config import open_url_with_retry
+from proxy_config import config_value, open_url_with_retry
 
 # Customize these variables, or override them with command-line arguments.
 INPUT_JSON = Path('products.json')
 OUTPUT_JSON = Path('product-details.json')
-DELAY = 0.5
+DELAY = float(config_value('request', 'delay_between_requests_seconds', 0.5))
 
 
-def fetch(url: str, timeout: int = 60) -> str:
+def fetch(url: str, timeout: int | None = None) -> str:
+    if timeout is None:
+        timeout = int(config_value('request', 'timeout_seconds', 60))
     request = Request(url, headers={
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131 Safari/537.36',
         'Accept-Language': 'id-ID,id;q=0.9,en;q=0.8',

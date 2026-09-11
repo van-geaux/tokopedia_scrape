@@ -147,9 +147,42 @@ Setiap URL memiliki maksimal 6 percobaan. Status permanen seperti HTTP 404 tidak
 
 ## Konfigurasi Proxy Opsional
 
-Kedua scraper mendukung proxy HTTP/HTTPS dengan autentikasi. Koneksi langsung tetap digunakan jika proxy tidak dikonfigurasi.
+Kedua scraper mendukung proxy HTTP/HTTPS dengan autentikasi. Koneksi langsung digunakan sebagai mode awal. Proxy baru diaktifkan jika terjadi status pemicu seperti `429`, lalu digunakan selama cooldown, default 30 menit. Setelah cooldown, scraper mencoba koneksi langsung kembali.
 
-Buat file `.env` dari template:
+Salin konfigurasi non-rahasia:
+
+```bash
+cp config.yml.example config.yml
+```
+
+Edit `config.yml`:
+
+```yaml
+proxy:
+  enabled: true
+  scheme: http
+  host: proxy.example.com
+  port: 8080
+  cooldown_seconds: 1800
+  trigger_statuses: [429, 503, 504]
+
+retry:
+  max_attempts: 6
+  initial_delay_seconds: 2
+  max_delay_seconds: 30
+
+request:
+  timeout_seconds: 60
+  delay_between_requests_seconds: 0.5
+```
+
+Jika `403` juga perlu mengaktifkan proxy, tambahkan ke daftar:
+
+```yaml
+trigger_statuses: [403, 429, 503, 504]
+```
+
+Simpan kredensial hanya di `.env`:
 
 ```bash
 cp .env.example .env
@@ -158,29 +191,26 @@ cp .env.example .env
 Isi `.env`:
 
 ```dotenv
-PROXY_SCHEME=http
-PROXY_HOST=proxy.example.com
-PROXY_PORT=8080
 PROXY_USERNAME=username_proxy
 PROXY_PASSWORD=password_proxy
 ```
 
-Alternatifnya, gunakan URL proxy lengkap:
+File `config.yml` dan `.env` tidak boleh dipush. Keduanya sudah dikecualikan oleh `.gitignore`. `config.yml.example` dan `.env.example` aman untuk dibagikan.
 
-```dotenv
-PROXY_URL=http://username_proxy:password_proxy@proxy.example.com:8080
+Install dependensi konfigurasi:
+
+```bash
+python3 -m pip install -r requirements.txt
 ```
 
-`PROXY_URL` memiliki prioritas jika diisi. File `.env` tidak boleh dipush karena sudah dikecualikan oleh `.gitignore`.
-
-Setelah `.env` dibuat, jalankan scraper seperti biasa:
+Setelah konfigurasi selesai, jalankan scraper seperti biasa:
 
 ```bash
 python3 tokopedia_store_scraper.py --pages 2 --output products.json
 python3 tokopedia_product_details.py --input products.json --output product-details.json
 ```
 
-Jika proxy tidak digunakan, biarkan semua variabel proxy kosong atau hapus file `.env`.
+Jika proxy tidak digunakan, biarkan `proxy.enabled: false`.
 
 ## File yang Tidak Dipush
 

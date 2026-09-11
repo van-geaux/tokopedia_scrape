@@ -13,12 +13,13 @@ from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import Request
 
-from proxy_config import open_url_with_retry
+from proxy_config import config_value, open_url_with_retry
 
 # Customize these values for another Tokopedia store or run configuration.
 STORE_URL = 'https://www.tokopedia.com/enchenmenscare/product'
 PAGES = 1
 OUTPUT_JSON = Path('products.json')
+DELAY = float(config_value('request', 'delay_between_requests_seconds', 0.5))
 
 CARD_RE = re.compile(r'<a\b(?=[^>]*\bclass="[^"]*Ui5-[^"]*")(?=[^>]*\bhref="([^"]+)")[^>]*>(.*?)</a>', re.I | re.S)
 NAME_RE = re.compile(r'<span\b[^>]*\bclass="[^"]*\+tnoq[^\"]*"[^>]*>(.*?)</span>', re.I | re.S)
@@ -63,7 +64,9 @@ def shop_base(url: str) -> str:
     return f'https://www.tokopedia.com/{parts[0]}/product'
 
 
-def fetch(url: str, timeout: int = 45) -> str:
+def fetch(url: str, timeout: int | None = None) -> str:
+    if timeout is None:
+        timeout = int(config_value('request', 'timeout_seconds', 60))
     request = Request(url, headers={
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131 Safari/537.36',
         'Accept-Language': 'id-ID,id;q=0.9,en;q=0.8',
@@ -135,7 +138,7 @@ def parse_page(source: str) -> list[dict]:
     return products
 
 
-def scrape(shop_url: str, pages: int = 1, delay: float = 0.5) -> list[dict]:
+def scrape(shop_url: str, pages: int = 1, delay: float = DELAY) -> list[dict]:
     base = shop_base(shop_url)
     results, seen = [], set()
     for page in range(1, pages + 1):

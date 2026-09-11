@@ -191,31 +191,63 @@ Setiap URL memiliki maksimal 6 percobaan. HTTP 404 dan error permanen lainnya ti
 
 ## Konfigurasi Proxy Opsional
 
-Kedua scraper mendukung proxy HTTP/HTTPS dengan autentikasi. Koneksi langsung digunakan secara default.
+Kedua scraper menggunakan koneksi langsung terlebih dahulu. Jika terjadi status pemicu seperti `429`, proxy diaktifkan selama cooldown, default 30 menit. Setelah cooldown, koneksi langsung dicoba kembali.
 
-Salin template konfigurasi:
+Salin file konfigurasi non-rahasia:
+
+```bash
+cp config.yml.example config.yml
+```
+
+Edit `config.yml`:
+
+```yaml
+proxy:
+  enabled: true
+  scheme: http
+  host: proxy.example.com
+  port: 8080
+  cooldown_seconds: 1800
+  trigger_statuses: [429, 503, 504]
+
+retry:
+  max_attempts: 6
+  initial_delay_seconds: 2
+  max_delay_seconds: 30
+
+request:
+  timeout_seconds: 60
+  delay_between_requests_seconds: 0.5
+```
+
+Untuk menganggap `403` sebagai pemicu proxy, gunakan:
+
+```yaml
+trigger_statuses: [403, 429, 503, 504]
+```
+
+Simpan kredensial hanya di `.env`:
 
 ```bash
 cp .env.example .env
 ```
 
-Kemudian isi `.env`:
+Isi `.env`:
 
 ```dotenv
-PROXY_SCHEME=http
-PROXY_HOST=proxy.example.com
-PROXY_PORT=8080
 PROXY_USERNAME=username_proxy
 PROXY_PASSWORD=password_proxy
 ```
 
-Alternatifnya, gunakan satu URL lengkap:
+File `config.yml` dan `.env` sudah dikecualikan oleh `.gitignore`. `config.yml.example` dan `.env.example` aman untuk dibagikan.
 
-```dotenv
-PROXY_URL=http://username_proxy:password_proxy@proxy.example.com:8080
+PyYAML diperlukan untuk membaca `config.yml`:
+
+```bash
+python3 -m pip install -r requirements.txt
 ```
 
-`PROXY_URL` diprioritaskan jika diisi. File `.env` sudah dikecualikan oleh `.gitignore` dan tidak boleh dibagikan.
+Jika proxy tidak digunakan, biarkan `proxy.enabled: false`.
 
 ## Alur Penggunaan Lengkap
 
