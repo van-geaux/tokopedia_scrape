@@ -1,0 +1,17 @@
+# Hasil scraping, jangan commit data
+products.json
+products-all-pages.json
+product-details.json
+products.csv
+result.json
+result.csv
+result-2pages.json
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Environment lokal
+.venv/
+venv/
+.env
